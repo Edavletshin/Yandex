@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e0e0e0"
+    xmlns:card="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:background="@color/yandexColor"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize">
+        <Button
+            android:textSize="13sp"
+            android:layout_toLeftOf="@+id/change"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_centerVertical="true"
+            android:id="@+id/fromLang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_centerHorizontal="true"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:background="@mipmap/ic_compare_arrows_black_24dp"
+            android:id="@+id/change"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            />
+
+        <Button
+            android:textSize="13sp"
+            android:layout_toRightOf="@+id/change"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_centerVertical="true"
+            android:id="@+id/toLang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <android.support.v7.widget.CardView
+        card:cardElevation="5dp"
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <EditText
+                android:text=""
+                android:background="@android:color/transparent"
+                android:paddingTop="5dp"
+                android:paddingLeft="5dp"
+                android:gravity="top|left"
+                android:paddingBottom="?attr/actionBarSize"
+                android:paddingRight="?attr/actionBarSize"
+                android:id="@+id/editText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textMultiLine"
+                android:hint="Введите слово"/>
+            <ImageView
+                android:scaleType="center"
+                android:id="@+id/deleteText"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@mipmap/ic_close"/>
+            <ImageView
+                android:id="@+id/searchView"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_action_voice_search"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:minHeight="?actionBarSize"
+        android:id="@+id/card1"
+        android:layout_below="@id/card"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+        <RelativeLayout
+            android:minHeight="?actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:visibility="invisible"
+                android:id="@+id/progressBar"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+
+                android:padding="5dp"
+                android:paddingRight="?attr/actionBarSize"
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView" />
+            <ImageView
+                android:id="@+id/elect"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_bookmark"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+</RelativeLayout>

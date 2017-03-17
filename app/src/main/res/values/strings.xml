@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">YandexTranslator</string>
+    <string name="linkOnYandex">https://translate.yandex.net/api/v1.5/tr.json/translate?key=</string>
+    <string name="apiKey">trnsl.1.1.20170314T221244Z.e2bdc28690f8544a.469f7499e2f56d8f594afcf3458956611933bb06</string>
+</resources>
