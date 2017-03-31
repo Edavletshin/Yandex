@@ -2,6 +2,7 @@ package com.edavletshin.yandextranslator.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +28,13 @@ public class HistoryArrayAdapter extends ArrayAdapter<HistoryArrayAdapter.Info> 
 
     public onElectButtonClickListener delegate;
 
+    //интерфейс для трекинга нажимания на кнопку, которая делает слово избранным или удаляет из избранных
     public interface onElectButtonClickListener {
-        void addElected(HistoryArrayAdapter.Info info);
-        void deleteElected(HistoryArrayAdapter.Info info);
+        void addElected(HistoryArrayAdapter.Info info, boolean isLast);
+        void deleteElected(HistoryArrayAdapter.Info info, boolean isLast);
     }
 
+    //конструктор
     public HistoryArrayAdapter(Context context, int resource, List<Info> objects, onElectButtonClickListener delegate) {
         super(context, resource, objects);
         this.delegate = delegate;
@@ -48,11 +51,13 @@ public class HistoryArrayAdapter extends ArrayAdapter<HistoryArrayAdapter.Info> 
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.history_item, parent, false);
         }
 
+        //инициализация вида слов в истории
         ((TextView) convertView.findViewById(R.id.translate)).setText(list.get(position).translate);
         ((TextView) convertView.findViewById(R.id.word)).setText(list.get(position).word);
         ((TextView) convertView.findViewById(R.id.langPair)).setText(list.get(position).langPair);
         final ImageView elect = (ImageView) convertView.findViewById(R.id.elect);
 
+        //слушатель для удаления/добавления избранных слов
         elect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,10 +66,18 @@ public class HistoryArrayAdapter extends ArrayAdapter<HistoryArrayAdapter.Info> 
                     list.get(position).isElected = "0";
                     Toast.makeText(getContext(), "Удалено из избранных", Toast.LENGTH_SHORT).show();
                     elect.setColorFilter(null);
-                    delegate.deleteElected(list.get(position));
+                    if (list.size()==position+1) {
+                        delegate.deleteElected(list.get(position),true);
+                    } else {
+                        delegate.deleteElected(list.get(position),false);
+                    }
 
                 } else {
-                    delegate.addElected(list.get(position));
+                    if (list.size()==position+1) {
+                        delegate.addElected(list.get(position),true);
+                    } else {
+                        delegate.addElected(list.get(position),false);
+                    }
                     list.get(position).isElected = "1";
                     elect.setColorFilter(view.getResources().getColor(R.color.yandexColor));
                     Toast.makeText(getContext(), "Добавлено в избранное", Toast.LENGTH_SHORT).show();
@@ -81,6 +94,7 @@ public class HistoryArrayAdapter extends ArrayAdapter<HistoryArrayAdapter.Info> 
         return convertView;
     }
 
+    //класс для слов в истории
     public static class Info {
 
         public Info(String id, String translate, String word, String langPair, String isElected) {

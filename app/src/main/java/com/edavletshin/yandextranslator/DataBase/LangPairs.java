@@ -13,6 +13,7 @@ import java.util.List;
 
 public class LangPairs {
 
+    //получение ключа по слову из PairsNames
     public static @NonNull String getKeyFromValue(HashMap<String,String> hashMap, String value) {
 
         for (String language : hashMap.keySet()) {
@@ -23,6 +24,7 @@ public class LangPairs {
         return "";
     }
 
+    //сортировка
     public static List<String> getSortedArray(HashMap<String,String> hashMap) {
         List<String> temp = new ArrayList<>();
         temp.addAll(hashMap.values());
@@ -30,6 +32,7 @@ public class LangPairs {
         return temp;
     }
 
+    //все языки, предоставляемые яндексом
     public static final HashMap<String , String> pairsNames = new HashMap<String , String>() {{
         put("az","азербайджанский");
         put("sq","албанский");

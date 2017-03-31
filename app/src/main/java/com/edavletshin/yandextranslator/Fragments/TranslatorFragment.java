@@ -68,13 +68,15 @@ public class TranslatorFragment extends Fragment {
     private HashMap<String,String> languages;//все языки
     private final Long TIME_FOR_WAIT = 750l;//длина, перед переводом слова
 
-    private refresh delegate;
-    public interface refresh{
+    private Refresh delegate;
+
+    public interface Refresh {
+        //интерфейс нужен для обновления истории, когда приложение получает ответ на перевод
         void refreshHistory();
     }
 
-    public void setOnRefreshListener(refresh delegate){
-
+    public void setOnRefreshListener(Refresh delegate){
+        this.delegate = delegate;
     }
 
     @Nullable
@@ -117,27 +119,45 @@ public class TranslatorFragment extends Fragment {
         //добавление переведенного текста в избранное
         view.findViewById(R.id.elect).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 if (!translatedText.getText().equals("")) {
                     Cursor cursor = dbHelper.fetchHistory(false);
                     cursor.moveToLast();
                     dbHelper.update(
                             cursor.getString(cursor.getColumnIndexOrThrow(DataEntry._ID)),
                             cursor.getString(cursor.getColumnIndexOrThrow(DataEntry.COLUMN_IS_ELECTED)));
-                    Toast.makeText(getActivity(), "Добавлено в избранное", Toast.LENGTH_SHORT).show();
+                    turnElect(false);
                     if (!isElected) {
-                        isElected = true;
-                        ((ImageView) view).setColorFilter(getResources().getColor(R.color.yandexColor));
-                    } else {
                         Toast.makeText(getActivity(), "Удалено из избранных", Toast.LENGTH_SHORT).show();
-                        isElected = false;
-                        ((ImageView) view).setColorFilter(null);
+                    } else {
+                        Toast.makeText(getActivity(), "Добавлено в избранное", Toast.LENGTH_SHORT).show();
+                    }
+                    if (delegate!=null) {
+                        delegate.refreshHistory();
                     }
                 } else {
                     Toast.makeText(getActivity(), "Сначало введите слово", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    //для обновления иконки добавления в избранные
+    public void turnElect(boolean elect){
+        if (!translatedText.getText().toString().isEmpty()) {
+            if (elect && isElected) {
+                isElected = false;
+                ((ImageView) view.findViewById(R.id.elect)).setColorFilter(null);
+            } else {
+                if (!isElected) {
+                    isElected = true;
+                    ((ImageView) view.findViewById(R.id.elect)).setColorFilter(getResources().getColor(R.color.yandexColor));
+                } else {
+                    isElected = false;
+                    ((ImageView) view.findViewById(R.id.elect)).setColorFilter(null);
+                }
+            }
+        }
     }
 
     private void initBar() {
@@ -234,14 +254,19 @@ public class TranslatorFragment extends Fragment {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 writtenWord = charSequence.toString();
 
-                //проверка, если уже был стартован таймер
-                if (mTimer != null) {
-                    mTimer.cancel();
+                //проверка, пуст ли задаваемый текст
+                if (!translatingText.getText().toString().isEmpty()) {
+
+                    //проверка, если уже был стартован таймер
+                    if (mTimer != null) {
+                        mTimer.cancel();
+                    }
+
+                    mTimer = new Timer();
+                    mMyTimerTask = new MyTimerTask();
+                    //запуск таймертаска
+                    mTimer.schedule(mMyTimerTask, TIME_FOR_WAIT);
                 }
-                mTimer = new Timer();
-                mMyTimerTask = new MyTimerTask();
-                //запуск таймертаска
-                mTimer.schedule(mMyTimerTask, TIME_FOR_WAIT);
             }
 
             @Override
@@ -262,6 +287,7 @@ public class TranslatorFragment extends Fragment {
                     translatedText.setText("");
                     //переводит кнопку для добавления в избранное в дефолтное состояние
                     ((ImageView) view.findViewById(R.id.elect)).setColorFilter(null);
+                    isElected = false;
                     //вводит прогресс бар в активное состояние
                     view.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
                 }
@@ -320,6 +346,10 @@ public class TranslatorFragment extends Fragment {
                 if (! word.equals("") &&  ! result.equals("")) {
                     //добавление слова в историю
                     dbHelper.insertTranslate(word,result,fromLang.toUpperCase()+" - "+toLang.toUpperCase());
+                    //обновление истории
+                    if (delegate!=null) {
+                        delegate.refreshHistory();
+                    }
                 }
                 //настраивание ответа
                 result = result.replaceAll("\\\\n", "\\\n");
@@ -413,6 +443,7 @@ public class TranslatorFragment extends Fragment {
 
 
 
+        //настройки окна выбора языка
         popup.setContentView(layout);
         popup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
         popup.setWidth(400);
@@ -426,7 +457,7 @@ public class TranslatorFragment extends Fragment {
 
     }
 
-    //ответ от интента с голосовым вводом
+    //ответ от намерения с голосовым вводом
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_VOICE && resultCode == RESULT_OK) {

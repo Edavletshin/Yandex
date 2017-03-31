@@ -8,6 +8,7 @@ import android.provider.BaseColumns;
 
 public class DataEntry implements BaseColumns {
 
+    //ключи для бд
     public final static String TABLE_NAME = "translations";
 
     public final static String _ID = BaseColumns._ID;

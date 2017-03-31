@@ -29,7 +29,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + DataEntry.COLUMN_IS_ELECTED + " INTEGER NOT NULL DEFAULT 0, "
                 + DataEntry.COLUMN_LANG_PAIR + " TEXT NOT NULL);";
 
-        // Запускаем создание таблицы
+        // Запуск создания таблицы
         sqLiteDatabase.execSQL(SQL_CREATE_GUESTS_TABLE);
     }
 
@@ -39,6 +39,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
 
+    //добавление слова в бд
     public void insertTranslate(String word, String translate, String pair) {
         ContentValues map = new ContentValues();
         map.put(DataEntry.COLUMN_WORD, word);
@@ -54,6 +55,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    //изменения состояния избранный/не избранный
     public void update(String id,String isElected){
         ContentValues values = new ContentValues();
         if (isElected.equals("0")) {
@@ -70,7 +72,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor fetchHistory(boolean onlyElected) {
+    //загрузка всех элементов из бд
+    public Cursor fetchHistory(/* выборка, либо все элементы, либо только избранные */boolean onlyElected) {
 
         Cursor cursor;
 
@@ -93,6 +96,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    //очистка
     public void clearDB(){
         getWritableDatabase().delete(DataEntry.TABLE_NAME, null,null);
     }

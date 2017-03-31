@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class SecondTabFragmentElected extends Fragment {
     private ListView listView;
     public HistoryArrayAdapter ownAdapter;
 
+    //функция для добавления слова в избранное
     public void addItemToElected(HistoryArrayAdapter.Info info){
         if (ownAdapter != null) {
             if (ownAdapter.getCount()!=0) {
@@ -60,8 +62,13 @@ public class SecondTabFragmentElected extends Fragment {
         }
     }
 
+    //функция для удаления слова из избранного
     public void deleteItemFromElected(HistoryArrayAdapter.Info info){
-        ownAdapter.list.remove(info);
+        for (int i = 0; i < ownAdapter.list.size(); i++){
+            if (ownAdapter.list.get(i).id.equals(info.id)){
+                ownAdapter.list.remove(i);
+            }
+        }
         ownAdapter.notifyDataSetChanged();
         if (ownAdapter.getCount()==0){
             String[] emptyText = new String[]{"Пусто"};
@@ -72,6 +79,7 @@ public class SecondTabFragmentElected extends Fragment {
         }
     }
 
+    //очистка
     public void clearList(){
         if (ownAdapter!=null){
             ownAdapter.list.clear();
@@ -83,6 +91,7 @@ public class SecondTabFragmentElected extends Fragment {
     }
 
 
+    //кастомный конструктор
     public static SecondTabFragmentElected getInstance(HistoryArrayAdapter.onElectButtonClickListener delegate){
         SecondTabFragmentElected fragment = new SecondTabFragmentElected();
         Bundle bundle = new Bundle();
@@ -117,6 +126,7 @@ public class SecondTabFragmentElected extends Fragment {
 
             List<HistoryArrayAdapter.Info> infoList = new ArrayList<>();
 
+            //добавление в список всех избранных слов
             for (int count = 0; count < cursor.getCount(); count++){
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(DataEntry._ID));
                 String translate = cursor.getString(cursor.getColumnIndexOrThrow(DataEntry.COLUMN_TRANSLATE));
@@ -134,6 +144,7 @@ public class SecondTabFragmentElected extends Fragment {
 
             listView.setAdapter(adapter);
 
+            //слушатель на поиск слов по ключу
             searchText.addTextChangedListener(textWatcher);
 
         }

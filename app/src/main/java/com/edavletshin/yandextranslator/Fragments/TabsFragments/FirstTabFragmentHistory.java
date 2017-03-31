@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +35,7 @@ public class FirstTabFragmentHistory extends Fragment {
     public HistoryArrayAdapter.onElectButtonClickListener delegate;
     public HistoryArrayAdapter ownAdapter;
 
+    //очситка
     public void clearList(){
         if (ownAdapter!=null){
             ownAdapter.list.clear();
@@ -46,15 +46,22 @@ public class FirstTabFragmentHistory extends Fragment {
         }
     }
 
-    public void setUnelected(HistoryArrayAdapter.Info info){
+    //убирает из избранных
+    public boolean setUnelected(HistoryArrayAdapter.Info info){
+        boolean isLast = false;
         for (int i = 0; i < ownAdapter.list.size(); i++){
             if (ownAdapter.list.get(i).id.equals(info.id)){
                 ownAdapter.list.get(i).isElected = "0";
+                if (ownAdapter.list.size()==i+1){
+                    isLast = true;
+                }
             }
         }
         ownAdapter.notifyDataSetChanged();
+        return isLast;
     }
 
+    //кастомный конструктор
     public static FirstTabFragmentHistory getInstance(HistoryArrayAdapter.onElectButtonClickListener delegate){
         FirstTabFragmentHistory fragment = new FirstTabFragmentHistory();
         Bundle bundle = new Bundle();
@@ -88,6 +95,7 @@ public class FirstTabFragmentHistory extends Fragment {
 
             List<HistoryArrayAdapter.Info> infoList = new ArrayList<>();
 
+            //инициалиция списка истории
             for (int count = 0; count < cursor.getCount(); count++){
                 String id = cursor.getString(cursor.getColumnIndexOrThrow(DataEntry._ID));
                 String translate = cursor.getString(cursor.getColumnIndexOrThrow(DataEntry.COLUMN_TRANSLATE));
@@ -105,6 +113,7 @@ public class FirstTabFragmentHistory extends Fragment {
 
             listView.setAdapter(adapter);
 
+            //слушатель для поиска слов по ключу
             searchText.addTextChangedListener(textWatcher);
 
         }

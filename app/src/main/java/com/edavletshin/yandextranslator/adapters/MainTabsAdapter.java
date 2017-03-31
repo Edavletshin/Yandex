@@ -1,6 +1,5 @@
 package com.edavletshin.yandextranslator.adapters;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -22,7 +21,7 @@ public class MainTabsAdapter extends FragmentStatePagerAdapter {
             ""
     };
 
-    public void refresh(){
+    private void refresh(){
         history.refresh();
     }
 
@@ -30,9 +29,24 @@ public class MainTabsAdapter extends FragmentStatePagerAdapter {
         super(fm);
 
 
-        history = new HistoryFragment();
-
         translator = new TranslatorFragment();
+        //слушатель для обновления истории, если было добавлено слово в бд
+        translator.setOnRefreshListener(new TranslatorFragment.Refresh() {
+            @Override
+            public void refreshHistory() {
+                refresh();
+            }
+        });
+
+        history = new HistoryFragment();
+        //слушатель, для того, чтобы иконка добавления в избранное менялась во фргаменте TranslatorFragment,
+        // если слово в истории было добавлено/удалено из избранных и являлось тем же самым, что и во фрагменте TranslatorFragment
+        history.setOnTurnElectedListener(new HistoryFragment.Elected() {
+            @Override
+            public void turnElect(boolean elected) {
+                translator.turnElect(elected);
+            }
+        });
 
     }
 
@@ -58,4 +72,6 @@ public class MainTabsAdapter extends FragmentStatePagerAdapter {
     public int getCount() {
         return tabs.length;
     }
+
+
 }
