@@ -93,6 +93,8 @@ public class FirstTabFragmentHistory extends Fragment {
             searchText.setEnabled(false);
         } else {
 
+            searchText.setEnabled(true);
+
             List<HistoryArrayAdapter.Info> infoList = new ArrayList<>();
 
             //инициалиция списка истории

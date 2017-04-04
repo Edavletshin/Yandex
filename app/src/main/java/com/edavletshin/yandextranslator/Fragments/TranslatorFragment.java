@@ -121,19 +121,23 @@ public class TranslatorFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!translatedText.getText().equals("")) {
-                    Cursor cursor = dbHelper.fetchHistory(false);
-                    cursor.moveToLast();
-                    dbHelper.update(
-                            cursor.getString(cursor.getColumnIndexOrThrow(DataEntry._ID)),
-                            cursor.getString(cursor.getColumnIndexOrThrow(DataEntry.COLUMN_IS_ELECTED)));
-                    turnElect(false);
-                    if (!isElected) {
-                        Toast.makeText(getActivity(), "Удалено из избранных", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "Добавлено в избранное", Toast.LENGTH_SHORT).show();
-                    }
-                    if (delegate!=null) {
-                        delegate.refreshHistory();
+                    try {
+                        Cursor cursor = dbHelper.fetchHistory(false);
+                        cursor.moveToLast();
+                        dbHelper.update(
+                                cursor.getString(cursor.getColumnIndexOrThrow(DataEntry._ID)),
+                                cursor.getString(cursor.getColumnIndexOrThrow(DataEntry.COLUMN_IS_ELECTED)));
+                        turnElect(false);
+                        if (!isElected) {
+                            Toast.makeText(getActivity(), "Удалено из избранных", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "Добавлено в избранное", Toast.LENGTH_SHORT).show();
+                        }
+                        if (delegate != null) {
+                            delegate.refreshHistory();
+                        }
+                    } catch (Exception e) {
+                        turnElect(false);
                     }
                 } else {
                     Toast.makeText(getActivity(), "Сначало введите слово", Toast.LENGTH_SHORT).show();
@@ -293,11 +297,13 @@ public class TranslatorFragment extends Fragment {
                 }
             });
             //старт асинктаска для перевода слова с помощью яндекс апи
-            new TranslatedTextGetter(
-                    LangPairs.getKeyFromValue(languages,fromLang.getText().toString()),
-                    LangPairs.getKeyFromValue(languages,toLang.getText().toString()),
-                    writtenWord)
-                    .execute();
+            if (!translatingText.getText().toString().isEmpty()) {
+                new TranslatedTextGetter(
+                        LangPairs.getKeyFromValue(languages, fromLang.getText().toString()),
+                        LangPairs.getKeyFromValue(languages, toLang.getText().toString()),
+                        writtenWord)
+                        .execute();
+            }
         }
     }
 
